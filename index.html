@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Landfall Plan: hurricane prep for South Florida households</title>
+  <meta name="description" content="A free hurricane and storm-prep planner for South Florida households. Answer a short quiz, get a personalized checklist, see live National Weather Service alerts, and print a family plan. Works offline and needs no account.">
+  <meta name="theme-color" content="#0b1f33">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 64 64" width="36" height="36" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
+          <path d="M32 9A23 23 0 0 1 55 32"/>
+          <path d="M32 55A23 23 0 0 1 9 32"/>
+          <path d="M32 20A12 12 0 0 1 44 32" stroke-width="5"/>
+          <path d="M32 44A12 12 0 0 1 20 32" stroke-width="5"/>
+        </g>
+        <circle cx="32" cy="32" r="4" fill="currentColor"/>
+      </svg>
+      <div>
+        <h1>Landfall Plan</h1>
+        <p class="tagline">Hurricane prep for South Florida homes</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span id="net-pill" class="pill" role="status">Online</span>
+      <button type="button" id="text-size" class="btn btn-ghost btn-small" aria-pressed="false">Large text</button>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section id="view-quiz" class="view" aria-labelledby="h-quiz" hidden>
+      <h2 id="h-quiz" tabindex="-1">Build your household's plan</h2>
+      <p class="lede">Answer a few questions and get a checklist sized for your family. Everything is kept on this device, with no account or tracking.</p>
+
+      <form id="quiz-form" novalidate>
+        <fieldset class="card">
+          <legend>Who is in your household?</legend>
+          <div class="field-grid">
+            <label class="field"><span>Adults (18 to 64)</span>
+              <input type="number" name="adults" min="0" max="20" inputmode="numeric"></label>
+            <label class="field"><span>Older adults (65+)</span>
+              <input type="number" name="seniors" min="0" max="20" inputmode="numeric"></label>
+            <label class="field"><span>Children (2 to 17)</span>
+              <input type="number" name="children" min="0" max="20" inputmode="numeric"></label>
+            <label class="field"><span>Infants (under 2)</span>
+              <input type="number" name="infants" min="0" max="20" inputmode="numeric"></label>
+            <label class="field"><span>Pets</span>
+              <input type="number" name="pets" min="0" max="20" inputmode="numeric"></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="card">
+          <legend>Your home</legend>
+          <label class="field"><span>Type of home</span>
+            <select name="homeType">
+              <option value="house">Single-family house or townhome</option>
+              <option value="condo">Condo</option>
+              <option value="apartment">Apartment</option>
+              <option value="mobile">Mobile or manufactured home</option>
+            </select></label>
+          <label class="check"><input type="checkbox" name="shutters"> <span>My home has hurricane shutters or impact windows</span></label>
+          <label class="check"><input type="checkbox" name="generator"> <span>We have a generator</span></label>
+        </fieldset>
+
+        <fieldset class="card">
+          <legend>Special needs</legend>
+          <label class="check"><input type="checkbox" name="needsMeds"> <span>Someone takes daily prescription medicine</span></label>
+          <label class="check"><input type="checkbox" name="powerMedical"> <span>Someone depends on electric medical equipment (oxygen, CPAP, and similar)</span></label>
+          <label class="check"><input type="checkbox" name="mobility"> <span>Someone has limited mobility</span></label>
+        </fieldset>
+
+        <fieldset class="card">
+          <legend>How long should your kit last?</legend>
+          <label class="field"><span>Days of supplies</span>
+            <select name="days">
+              <option value="3">3 days (minimum)</option>
+              <option value="5">5 days</option>
+              <option value="7">7 days (recommended)</option>
+              <option value="10">10 days</option>
+            </select></label>
+          <p class="hint">After a major storm, help can take days to reach you, so a week is a good goal. Check FloridaDisaster.org and Ready.gov for current guidance.</p>
+        </fieldset>
+
+        <p id="quiz-error" class="error" role="alert" hidden></p>
+        <button type="submit" class="btn btn-primary btn-wide">Build my plan</button>
+      </form>
+    </section>
+
+    <section id="view-plan" class="view" aria-labelledby="h-plan" hidden>
+      <h2 id="h-plan" tabindex="-1">Your storm-prep plan</h2>
+      <p class="print-only" id="print-date"></p>
+
+      <div id="plan-empty" class="card" hidden>
+        <p>You have not built a plan yet. It takes about a minute.</p>
+        <a class="btn btn-primary" href="#quiz">Start the quiz</a>
+      </div>
+
+      <div id="plan-content" hidden>
+        <p id="plan-lede" class="lede"></p>
+        <div id="stats" class="stats"></div>
+
+        <div class="card progress-card">
+          <div class="progress-head">
+            <strong id="progress-text">0 of 0 done</strong>
+            <span id="progress-pct">0%</span>
+          </div>
+          <div class="bar" role="progressbar" aria-labelledby="progress-text" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+            <div id="progress-fill" class="bar-fill"></div>
+          </div>
+        </div>
+
+        <div class="actions no-print">
+          <button type="button" id="share-btn" class="btn btn-ghost">Share checklist</button>
+          <button type="button" class="btn btn-ghost" id="print-plan">Print plan</button>
+          <a class="btn btn-ghost" href="#quiz">Edit answers</a>
+        </div>
+
+        <div id="sections"></div>
+
+        <div class="card">
+          <h3>Trusted sources</h3>
+          <ul id="resources" class="links"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-alerts" class="view" aria-labelledby="h-alerts" hidden>
+      <h2 id="h-alerts" tabindex="-1">Weather alerts</h2>
+      <p class="lede">Live alerts from the National Weather Service for <strong id="loc-label">South Florida</strong>.</p>
+
+      <div class="actions">
+        <button type="button" id="refresh-alerts" class="btn btn-primary">Refresh</button>
+        <button type="button" id="use-location" class="btn btn-ghost">Use my location</button>
+      </div>
+
+      <p id="loc-note" class="status" hidden>Location access is off, so these alerts cover South Florida in general. To see alerts for where you are, turn on Location Services for your browser in your device settings, allow location for this site, reload the page, then tap Use my location.</p>
+      <p id="alert-status" class="status" role="status" aria-live="polite"></p>
+      <div id="alert-list" aria-live="polite"></div>
+
+      <div class="card">
+        <h3>Know the difference</h3>
+        <ul class="plain">
+          <li><strong>Watch:</strong> conditions are possible, meaning it is time to finish preparing.</li>
+          <li><strong>Warning:</strong> conditions are expected or happening, so take action now.</li>
+        </ul>
+        <p class="hint">Landfall Plan is a planning aid. In an emergency, follow local officials and call 911 for anything life-threatening.</p>
+      </div>
+    </section>
+
+    <section id="view-family" class="view" aria-labelledby="h-family" hidden>
+      <h2 id="h-family" tabindex="-1">Family plan</h2>
+      <p class="lede no-print">Fill this in once, print it, and keep a copy in your go kit. Your answers are kept on this device.</p>
+
+      <div class="card">
+        <h3>Emergency contacts</h3>
+        <div id="contacts"></div>
+        <button type="button" id="add-contact" class="btn btn-ghost btn-small no-print">Add a contact</button>
+        <label class="field"><span>Out-of-area contact everyone will check in with</span>
+          <input type="text" id="fam-outOfArea" autocomplete="off"></label>
+      </div>
+
+      <div class="card">
+        <h3>Where we will meet</h3>
+        <label class="field"><span>Near our home</span>
+          <input type="text" id="fam-meetNear" autocomplete="off"></label>
+        <label class="field"><span>Outside our neighborhood</span>
+          <input type="text" id="fam-meetFar" autocomplete="off"></label>
+        <label class="field"><span>If we evacuate, we will go to</span>
+          <input type="text" id="fam-evac" autocomplete="off"></label>
+      </div>
+
+      <div class="card">
+        <h3>Neighbors to check on</h3>
+        <p class="hint no-print">Older neighbors, people who live alone, or anyone who may need help after a storm.</p>
+        <div id="neighbors"></div>
+        <button type="button" id="add-neighbor" class="btn btn-ghost btn-small no-print">Add a neighbor</button>
+      </div>
+
+      <div class="card">
+        <h3>Other notes</h3>
+        <label class="field"><span>Doctors, vet, insurance policy numbers, anything else</span>
+          <textarea id="fam-notes" rows="4"></textarea></label>
+      </div>
+
+      <div class="actions no-print">
+        <button type="button" id="print-family" class="btn btn-primary">Print family plan</button>
+        <button type="button" id="clear-data" class="btn btn-danger">Erase all saved data</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot no-print">
+    <p>Weather data: National Weather Service. Add this page to your phone's home screen to use it offline.</p>
+  </footer>
+
+  <nav class="tabbar no-print" aria-label="Main">
+    <a href="#quiz" data-tab="quiz"><span class="ico" aria-hidden="true">?</span>Quiz</a>
+    <a href="#plan" data-tab="plan"><span class="ico" aria-hidden="true">✓</span>Plan</a>
+    <a href="#alerts" data-tab="alerts"><span class="ico" aria-hidden="true">!</span>Alerts</a>
+    <a href="#family" data-tab="family"><span class="ico" aria-hidden="true">♥</span>Family</a>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="plan.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
